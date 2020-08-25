@@ -4,17 +4,17 @@ import './Cell.css';
 
 
 function Cell(props) {
-    
-    function handleClick(evt){
-        props.flipCellsAroundMe();
+    const { x, y, cellSize} = props;
+    return (
+      <div className="Cell" style={{
+        left: `${cellSize * x + 1}px`,
+        top: `${cellSize * y + 1}px`,
+        width: `${cellSize - 1}px`,
+        height: `${cellSize - 1}px`,
+            }} />
+        );
     }
 
-
-    let classes = "Cell" + (props.isLit ? " Cell-lit" : "");
-    return (
-      <td className={classes} onClick={handleClick}/>
-    );
-  }
   
 
 export default Cell

@@ -1,4 +1,6 @@
 .App {
+  height: 100vh;
+  font-family: 'Russo One', sans-serif;
   text-align: center;
 }
 
