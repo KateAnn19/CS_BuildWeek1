@@ -1,9 +1,11 @@
-.Cell{
-    height: 100px;
-    width: 100px;
-    background-color: darkgray;
-}
-
-.Cell-lit{
-    background-color: white; 
-}
+.Cell {
+    height: 30px;
+    width: 30px;
+    border-radius: 1px;
+    background-color: grey;
+    /* transition: background-color 0.7s ease; */
+  }
+  
+  .Cell-Alive {
+    background-color: #00bcd4;
+  }
