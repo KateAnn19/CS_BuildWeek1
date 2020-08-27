@@ -4,15 +4,19 @@ import { Patterns } from "./Patterns";
 import Cell from "./Cell";
 import produce from "immer";
 
+
+// todo:
+// add drop down menu with possible configurations for user to start with
+// add drop down menu or bar that user can adjust board size with
+// implement color themes
+// refactor and re-organize code
+    // add comments above all functions and some logic for colleqgue 
+    // rename variables and function names 
+    // refactor functions and logic 
+
+
 //board sizes menu
 //25, 50, 75, 100
-
-// let patterns = [
-//   "random", "glider",
-//   "glider gun","pulsar",
-//   "spaceship","R-pentomino",
-//   "diehard","unnamed","clear board"]
-
 let patterns = [
   "random", "glider", 
   "glider gun","pulsar", 
@@ -40,7 +44,6 @@ function Board(props) {
 
   const [cells, setCells] = useState(() => {
     let board = [];
-    // TODO: create array-of-arrays of true/false values
     for (let y = 0; y < boardsize; y++) {
       let row = [];
       for (let x = 0; x < boardsize; x++) {
@@ -159,9 +162,6 @@ function Board(props) {
     setTimeout(null);
   }
 
-
- 
-
   function start() {
     setRunning(!running);
     if(!running){
@@ -169,7 +169,6 @@ function Board(props) {
       runIteration();
     }
   }
-
   
   function clear() {
     //clears the board and turns all cells dead
@@ -205,9 +204,6 @@ function Board(props) {
     setGeneration(genCounter);
   }
 
-  function randomBoard(){
-
-  }
 
   function changeColorScheme(event){
     var value = event.target.value;
@@ -229,42 +225,40 @@ function Board(props) {
 
 
   return (
-    <div className="container">
-      <div className='Board-title'>
+    <>
+    <div className='Board-title'>
       <div className='neon-orange'>Conway's Game</div>
-              <div className='neon-blue'>Of Life</div>
-      </div>
-      <div className="Rules">
-        <h2>The Rules</h2>
-        <h3>For a space that is 'alive' or 'populated'</h3>
-        <p>
-          Each cell with one or no neighbors dies, as if by solitude. Each cell
-          with four or more neighbors dies, as if by overpopulation. Each cell
-          with two or three neighbors survives.
-        </p>
-        <h3>For a space that is 'dead' or 'unpopulated'</h3>
-        <p>
-          Each cell with exactly three neighbors (no more, no less) becomes
-          'alive' populated.
-        </p>
-      </div>
-      {makeEmptyTable()}
-      <div id="controls">
+      <div className='neon-blue'>Of Life</div>
+    </div>
+    <div className="container">
+      
+        <div className="Rules">
+          <h2>The Rules</h2>
+          <h3 className="text-title">For a space that is 'alive' or 'populated'</h3>
+          <p className="text">
+            Each cell with one or no neighbors dies, as if by solitude. Each cell
+            with four or more neighbors dies, as if by overpopulation. Each cell
+            with two or three neighbors survives.
+          </p>
+          <h3 className="text-title">For a space that is 'dead' or 'unpopulated'</h3>
+          <p className="text">
+            Each cell with exactly three neighbors (no more, no less) becomes
+            'alive' populated.
+          </p>
+          {makeEmptyTable()}
+        </div>
+
+        <div id="controls">
           <button className="btn control" id="run" onClick={start}>Run</button>
           <button className="btn control" id="step" onClick={advanceOneGeneration}>Step</button>          
           <button className="btn control" id="pause" onClick={stop}>Pause</button>
           <button className="btn" id="reset" onClick={clear}>Reset</button>
-          
-         
           <select id="speed-select" onChange={changeSimSpeed}>
             <option value="slow">Slow</option>
             <option value="medium" selected="selected">Medium</option>
             <option value="fast">Fast</option>
           </select>
-          <select id="color-scheme" 
-                  onChange={changeColorScheme} 
-                  style={{backgroundColor: boardcolor, 
-                          color: boardcolor === "#CACACA" ? "#2E2E2E" : "#FFFFFF"}}>
+          {/* <select id="color-scheme" onChange={changeColorScheme} style={{backgroundColor: boardcolor, color: boardcolor === "#CACACA" ? "#2E2E2E" : "#FFFFFF"}}>
             <option value="one">Theme #1</option>
             <option value="two">Theme #2</option>
             <option value="three">Theme #3</option>
@@ -280,19 +274,16 @@ function Board(props) {
             <option value="six">R-pentomino</option>
             <option value="seven">Diehard</option>
             <option value="eight">Unnamed</option>
-          </select>
-      </div>
-      <div className="controls">
-
-      {/* <button
-        onClick={start}
-      >
-        {running ? "stop" : "start"}
-      </button> */}
-        {/* <button onClick={clear}>Clear Board</button> */}
+          </select> */}
+        </div>
         <div id="gen-box">  
           <p id="generation">Generation: {generation}</p>
-        </div>  
+        </div> 
+        
+    </div>
+    
+
+         
         <div className="Explanation">
           <h2>The Game</h2>
           <p className="text">
@@ -306,23 +297,10 @@ function Board(props) {
           </p>
           <p className="text-center"><a href="https://www.youtube.com/watch?v=E8kUJL04ELA">Interview with John Conway</a></p>		
         </div>
-      </div>
-    </div>
+    </>
   );
 }
 
 export default Board;
 
-// todo:
-// add drop down menu with possible configurations for user to start with
-// add onClick to start button to start simulation
-// add onClick to stop button to stop simulation
-// add onClick to pause button to pause simulation
-// add drop down menu or bar that user can adjust board size with
-// make sure generations of simulation are being calculated with every re-render
-// add onClick to every cell
-// create logic for cells
-// create function for detecting neighbors
-// state of board:
-//    #each generation
-//      #whether cells or dead or alive
+

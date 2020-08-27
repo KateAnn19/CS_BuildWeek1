@@ -1,3 +1,9 @@
+.container{
+    
+}
+
+
+
 .Board {
     margin: 0 auto;
     border-radius: 10px;
@@ -179,15 +185,31 @@
   }
 
   .text {
-    margin: 20px auto;
+    margin: 0 auto;
     background-color: #ccc;
-    padding: 20px;
+    padding: 10px;
     border: 1px solid #bbb;
     border-radius: 20px;
     font-weight: bold;
     font-size: 18px;
     width: 40%;
     line-height: 1.5;
+}
+
+.text-title {
+    margin: 0 auto;
+    background-color: #1FA9B0;
+    padding: 10px;
+    border: 1px solid #bbb;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 18px;
+    width: 40%;
+    line-height: 1.5;
+}
+
+.text-center{
+    margin: 20px 0;
 }
   
   
