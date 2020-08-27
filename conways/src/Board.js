@@ -295,7 +295,7 @@ function Board(props) {
         </div>  
         <div className="Explanation">
           <h2>The Game</h2>
-          <p>
+          <p className="text">
             The Game of Life is not your typical computer game. It is a
             'cellular automaton', and was invented by Cambridge mathematician
             John Conway. This game became widely known when it was mentioned in
