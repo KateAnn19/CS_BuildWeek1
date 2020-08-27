@@ -13,42 +13,30 @@ import produce from "immer";
 //   "spaceship","R-pentomino",
 //   "diehard","unnamed","clear board"]
 
-const operations = [
-  [-1, -1],
-  [-1, 0],
-  [-1, 1],
-  [0, 1],
-  [1, 1],
-  [1, 0],
-  [1, -1],
-  [0, -1],
-];
+let patterns = [
+  "random", "glider", 
+  "glider gun","pulsar", 
+  "spaceship","R-pentomino",
+  "diehard","unnamed","clear board"];
 
-let numRows =25;
-let numCols = 25;
 
-const generateEmptyGrid = () => {
-  const rows = [];
-  for (let i = 0; i < numRows; i++) {
-    rows.push(Array.from(Array(numCols), () => 0));
-  }
-
-  return rows;
+let genCounter = 0;
+let speedMap = {slow: 200, medium: 100, fast: 50};
+let colorMap = {
+  one:   {primary: "#5EB200", secondary: "#004366", grid: "#00324D"},
+  two:   {primary: "#F4A300", secondary: "#660004", grid: "#4D0003"},
+  three: {primary: "#43004C", secondary: "#E6FFD7", grid: "#B6FF8B"},
+  four:  {primary: "#CACACA", secondary: "#282828", grid: "#323232"},
 };
 
 function Board(props) {
   const [generation, setGeneration] = useState(0);
   const [boardsize, setBoardSize] = useState(25);
-  const [pattern, setPattern] = useState({});
+  const [pattern, setPattern] = useState(patterns);
   const [running, setRunning] = useState(false);
   const [interval, setInterval] = useState(100);
-  const [grid, setGrid] = useState(() => {
-    const rows = [];
-    for (let i = 0; i < boardsize; i++) {
-      rows.push(Array.from(Array(boardsize), () => 0));
-    }
-    return rows;
-  });
+  const [boardcolor, setboardColor] = useState(colorMap.one.primary);
+ 
 
   const [cells, setCells] = useState(() => {
     let board = [];
@@ -156,8 +144,12 @@ function Board(props) {
             }
           }
         }
+        
       })
     })
+   
+    genCounter += 1;
+    setGeneration(genCounter);
     setTimeout(runIteration, interval);
   }, [interval, calculateNeighbors, boardsize]);
 
@@ -168,38 +160,7 @@ function Board(props) {
   }
 
 
-  //his function 
-  const runSimulation = useCallback(() => {
-    //simulate
-    if (!runningRef.current) {
-      return;
-    }
-    setGrid(g => {
-      return produce(g, gridCopy => {
-        for (let y = 0; y < boardsize; y++) {
-          for (let x = 0; x < boardsize; x++) {
-            let neighbors = 0;
-            operations.forEach(([i,t]) => {
-              const newY = y + i;
-              const newX = x + t;
-              if(newY >= 0 && newY < boardsize && newX >= 0 && newX < boardsize){
-                neighbors += g[newY][newX];
-              }
-            });
-
-            if(neighbors < 2 || neighbors > 3){
-              gridCopy[y][x] = 0;
-            }else if(g[y][x] === 0 && neighbors === 3){
-              gridCopy[y][x] = 1;
-            }
-          }
-        }
-      })
-    });
-
-    setTimeout(runSimulation, interval);
-  }, [boardsize, interval]);
-
+ 
 
   function start() {
     setRunning(!running);
@@ -213,70 +174,66 @@ function Board(props) {
   function clear() {
     //clears the board and turns all cells dead
     setCells(createBoard);
+    setGeneration(0);
   }
 
-  function makeGrid() {
-    return grid.map((rows, i) =>
-      rows.map((col, k) => (
-        <div
-          key={i + k}
-          onClick={() => {
-            const newGrid = produce(grid, (gridCopy) => {
-              gridCopy[i][k] = grid[i][k] ? 0 : 1;
-            });
-            setGrid(newGrid);
-          }}
-          style={{
-            width: 20,
-            height: 20,
-            border: "1px solid black",
-            backgroundColor: grid[i][k] ? "pink" : "lightgrey",
-          }}
-        />
-      ))
-    );
+  //Advances board and generation count by one
+  function advanceOneGeneration() {
+    stop();
+    setCells(c => {
+      return produce(c, cellCopy => {
+        for (let y = 0; y < boardsize; y++) {
+          for (let x = 0; x < boardsize; x++) {
+            let neighbors = calculateNeighbors(c, y, x);
+            if (c[y][x]) {
+              if (neighbors === 2 || neighbors === 3) {
+                cellCopy[y][x] = 1;
+              } else {
+                cellCopy[y][x] = 0;
+              }
+            } else {
+              if (!c[y][x] && neighbors === 3) {
+                cellCopy[y][x] = 1;
+              }
+            }
+          }
+        }
+        
+      })
+    })
+    genCounter += 1;
+    setGeneration(genCounter);
   }
+
+  function randomBoard(){
+
+  }
+
+  function changeColorScheme(event){
+    var value = event.target.value;
+    setboardColor({ primaryColor:   colorMap[value].primary, 
+                    secondaryColor: colorMap[value].secondary, 
+                    gridLineColor:  colorMap[value].grid })
+  }
+
+   //Changes sim speed according to button press
+  function changeSimSpeed(event){
+    var id = event.target.value;
+    let simSpeed = speedMap[id];
+    setInterval(simSpeed);
+  }
+
+  function changePattern(event){
+
+  }
+
 
   return (
     <div className="container">
-      <div
-        style={{
-          justifyContent: "center",
-          display: "grid",
-          gridTemplateColumns: `repeat(${boardsize}, 20px)`,
-        }}
-      >{grid.map((rows, i) =>
-          rows.map((col, k) => (
-            <div
-              key={`${i}-${k}`}
-              onClick={() => {
-                const newGrid = produce(grid, gridCopy => {
-                  gridCopy[i][k] = grid[i][k] ? 0 : 1;
-                });
-                setGrid(newGrid);
-              }}
-              style={{
-                width: 20,
-                height: 20,
-                backgroundColor: grid[i][k] ? "pink" : undefined,
-                border: "solid 1px black"
-              }}
-            />
-            )))}
-        </div>
-      <button onClick={() => {
-        setRunning(!running);
-        if(!running){
-          runningRef.current = true;
-          runSimulation();
-        }
-      }}>{running ? "Stop" : "Start"}</button>
-      <button
-        onClick={() => {
-          setGrid(generateEmptyGrid());
-        }}
-      > Clear
-      </button>
+      <div className='Board-title'>
+      <div className='neon-orange'>Conway's Game</div>
+              <div className='neon-blue'>Of Life</div>
+      </div>
       <div className="Rules">
         <h2>The Rules</h2>
         <h3>For a space that is 'alive' or 'populated'</h3>
@@ -292,11 +249,50 @@ function Board(props) {
         </p>
       </div>
       {makeEmptyTable()}
+      <div id="controls">
+          <button className="btn control" id="run" onClick={start}>Run</button>
+          <button className="btn control" id="step" onClick={advanceOneGeneration}>Step</button>          
+          <button className="btn control" id="pause" onClick={stop}>Pause</button>
+          <button className="btn" id="reset" onClick={clear}>Reset</button>
+          
+         
+          <select id="speed-select" onChange={changeSimSpeed}>
+            <option value="slow">Slow</option>
+            <option value="medium" selected="selected">Medium</option>
+            <option value="fast">Fast</option>
+          </select>
+          <select id="color-scheme" 
+                  onChange={changeColorScheme} 
+                  style={{backgroundColor: boardcolor, 
+                          color: boardcolor === "#CACACA" ? "#2E2E2E" : "#FFFFFF"}}>
+            <option value="one">Theme #1</option>
+            <option value="two">Theme #2</option>
+            <option value="three">Theme #3</option>
+            <option value="four">Theme #4</option>
+          </select>
+          <select id="pattern" onChange={changePattern} 
+                  style={{backgroundColor: "grey"}}>
+            <option value="one">Random</option>
+            <option value="two">Glider</option>
+            <option value="three">Glider Gun</option>
+            <option value="four">Pulsar</option>
+            <option value="five">Spaceship</option>
+            <option value="six">R-pentomino</option>
+            <option value="seven">Diehard</option>
+            <option value="eight">Unnamed</option>
+          </select>
+      </div>
       <div className="controls">
-        <button onClick={start}>Start</button>
-        <button onClick={stop}>Stop</button>
-        <button onClick={clear}>Clear Board</button>
-        <h3>Generation: {generation}</h3>
+
+      {/* <button
+        onClick={start}
+      >
+        {running ? "stop" : "start"}
+      </button> */}
+        {/* <button onClick={clear}>Clear Board</button> */}
+        <div id="gen-box">  
+          <p id="generation">Generation: {generation}</p>
+        </div>  
         <div className="Explanation">
           <h2>The Game</h2>
           <p>
@@ -308,6 +304,7 @@ function Board(props) {
             live, die or multiply. Depending on the initial conditions, the
             cells form various patterns throughout the course of the game.
           </p>
+          <p className="text-center"><a href="https://www.youtube.com/watch?v=E8kUJL04ELA">Interview with John Conway</a></p>		
         </div>
       </div>
     </div>
