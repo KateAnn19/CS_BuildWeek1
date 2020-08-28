@@ -251,7 +251,7 @@ function Board(props) {
         <div id="controls">
           <button className="btn control" id="run" onClick={start}>Run</button>
           <button className="btn control" id="step" onClick={advanceOneGeneration}>Step</button>          
-          <button className="btn control" id="pause" onClick={stop}>Pause</button>
+          <button className="btn control" id="pause" onClick={stop}>Stop</button>
           <button className="btn" id="reset" onClick={clear}>Reset</button>
           <select id="speed-select" onChange={changeSimSpeed}>
             <option value="slow">Slow</option>
@@ -281,9 +281,6 @@ function Board(props) {
         </div> 
         
     </div>
-    
-
-         
         <div className="Explanation">
           <h2>The Game</h2>
           <p className="text">
